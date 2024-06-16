@@ -1,22 +1,25 @@
-// src/main/java/com/example/freetours/model/User.java
 package com.example.freetours.model;
 
-import jakarta.persistence.*;
-import java.util.Set;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "app_user")  // Cambia el nombre de la tabla para evitar conflictos con palabras reservadas
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String username;
     private String password;
     private String role;
 
-    @OneToMany(mappedBy = "user")
-    private Set<Reservation> reservations;
-
     // Getters y Setters
+
     public Long getId() {
         return id;
     }
@@ -47,13 +50,5 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    public Set<Reservation> getReservations() {
-        return reservations;
-    }
-
-    public void setReservations(Set<Reservation> reservations) {
-        this.reservations = reservations;
     }
 }

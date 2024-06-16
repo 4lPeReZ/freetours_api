@@ -1,3 +1,4 @@
+// src/main/java/com/example/freetours/config/SecurityConfig.java
 package com.example.freetours.config;
 
 import org.springframework.context.annotation.Bean;
@@ -16,14 +17,9 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/api/users/**").hasRole("ADMIN")  // Solo los ADMIN pueden acceder a rutas de usuarios
-                                .requestMatchers("/api/tours/**", "/api/reservations/**").authenticated()  // Requiere autenticación
-                                .anyRequest().permitAll()  // Permitir todas las demás solicitudes
+                                .requestMatchers("/api/auth/**").permitAll()  // Permitir todas las solicitudes a /api/auth/**
+                                .anyRequest().authenticated()  // Requiere autenticación para todas las demás solicitudes
                 )
-                .formLogin(formLogin ->
-                        formLogin.defaultSuccessUrl("/").permitAll()
-                )  // Permitir formulario de login
-                .logout(logout -> logout.permitAll())  // Permitir logout
                 .csrf(csrf -> csrf.disable());  // Deshabilitar CSRF para simplificar
         return http.build();
     }
