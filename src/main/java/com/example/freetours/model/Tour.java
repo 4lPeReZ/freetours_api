@@ -1,10 +1,7 @@
-// src/main/java/com/example/freetours/model/Tour.java
 package com.example.freetours.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
@@ -12,9 +9,17 @@ public class Tour {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull
     private String name;
+
     private String description;
+
+    @NotNull
     private double price;
+
+    @NotNull
+    private String city;
 
     @OneToMany(mappedBy = "tour")
     private Set<Reservation> reservations;
@@ -50,6 +55,14 @@ public class Tour {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public Set<Reservation> getReservations() {

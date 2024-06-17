@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/api/auth/**").permitAll()
+                                .requestMatchers("/api/tours/**").permitAll()  // Permitir acceso a /api/tours sin autenticación
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement ->

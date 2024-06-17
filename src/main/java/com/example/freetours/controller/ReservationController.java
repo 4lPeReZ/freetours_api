@@ -1,8 +1,8 @@
-// src/main/java/com/example/freetours/controller/ReservationController.java
 package com.example.freetours.controller;
 
 import com.example.freetours.model.Reservation;
 import com.example.freetours.service.ReservationService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,16 +33,17 @@ public class ReservationController {
     }
 
     @PostMapping
-    public Reservation createReservation(@RequestBody Reservation reservation) {
-        return reservationService.saveReservation(reservation);
+    public ResponseEntity<Reservation> createReservation(@Valid @RequestBody Reservation reservation) {
+        return ResponseEntity.ok(reservationService.saveReservation(reservation));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Reservation> updateReservation(@PathVariable Long id, @RequestBody Reservation reservationDetails) {
+    public ResponseEntity<Reservation> updateReservation(@PathVariable Long id, @Valid @RequestBody Reservation reservationDetails) {
         Optional<Reservation> reservation = reservationService.getReservationById(id);
         if (reservation.isPresent()) {
             Reservation reservationToUpdate = reservation.get();
             reservationToUpdate.setStatus(reservationDetails.getStatus());
+            reservationToUpdate.setDate(reservationDetails.getDate());
             return ResponseEntity.ok(reservationService.saveReservation(reservationToUpdate));
         } else {
             return ResponseEntity.notFound().build();

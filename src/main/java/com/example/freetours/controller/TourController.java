@@ -1,8 +1,8 @@
-// src/main/java/com/example/freetours/controller/TourController.java
 package com.example.freetours.controller;
 
 import com.example.freetours.model.Tour;
 import com.example.freetours.service.TourService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,27 +24,25 @@ public class TourController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Tour> getTourById(@PathVariable Long id) {
-        Optional<Tour> tour = tourService.getTourById(id);
-        if (tour.isPresent()) {
-            return ResponseEntity.ok(tour.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return tourService.getTourById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Tour createTour(@RequestBody Tour tour) {
-        return tourService.saveTour(tour);
+    public ResponseEntity<Tour> createTour(@Valid @RequestBody Tour tour) {
+        return ResponseEntity.ok(tourService.saveTour(tour));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Tour> updateTour(@PathVariable Long id, @RequestBody Tour tourDetails) {
+    public ResponseEntity<Tour> updateTour(@PathVariable Long id, @Valid @RequestBody Tour tourDetails) {
         Optional<Tour> tour = tourService.getTourById(id);
         if (tour.isPresent()) {
             Tour tourToUpdate = tour.get();
             tourToUpdate.setName(tourDetails.getName());
             tourToUpdate.setDescription(tourDetails.getDescription());
             tourToUpdate.setPrice(tourDetails.getPrice());
+            tourToUpdate.setCity(tourDetails.getCity());
             return ResponseEntity.ok(tourService.saveTour(tourToUpdate));
         } else {
             return ResponseEntity.notFound().build();

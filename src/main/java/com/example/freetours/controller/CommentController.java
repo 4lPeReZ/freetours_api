@@ -1,8 +1,8 @@
-// src/main/java/com/example/freetours/controller/CommentController.java
 package com.example.freetours.controller;
 
 import com.example.freetours.model.Comment;
 import com.example.freetours.service.CommentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +13,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/comments")
 public class CommentController {
+
     @Autowired
     private CommentService commentService;
 
@@ -32,12 +33,12 @@ public class CommentController {
     }
 
     @PostMapping
-    public Comment createComment(@RequestBody Comment comment) {
-        return commentService.saveComment(comment);
+    public ResponseEntity<Comment> createComment(@Valid @RequestBody Comment comment) {
+        return ResponseEntity.ok(commentService.saveComment(comment));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Comment> updateComment(@PathVariable Long id, @RequestBody Comment commentDetails) {
+    public ResponseEntity<Comment> updateComment(@PathVariable Long id, @Valid @RequestBody Comment commentDetails) {
         Optional<Comment> comment = commentService.getCommentById(id);
         if (comment.isPresent()) {
             Comment commentToUpdate = comment.get();

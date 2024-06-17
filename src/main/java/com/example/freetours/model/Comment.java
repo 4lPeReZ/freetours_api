@@ -1,8 +1,13 @@
-// src/main/java/com/example/freetours/model/Comment.java
 package com.example.freetours.model;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class Comment {
@@ -10,16 +15,17 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Content is mandatory")
+    @Size(min = 10, max = 500, message = "Content must be between 10 and 500 characters")
+    private String content;
+
+    @NotNull(message = "User is mandatory")
     @ManyToOne
-    @JoinColumn(name = "user_id")
     private User user;
 
+    @NotNull(message = "Tour is mandatory")
     @ManyToOne
-    @JoinColumn(name = "tour_id")
     private Tour tour;
-
-    private String content;
-    private LocalDateTime timestamp;
 
     // Getters y Setters
     public Long getId() {
@@ -28,6 +34,14 @@ public class Comment {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public User getUser() {
@@ -44,21 +58,5 @@ public class Comment {
 
     public void setTour(Tour tour) {
         this.tour = tour;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
     }
 }

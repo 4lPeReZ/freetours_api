@@ -1,23 +1,26 @@
-// src/main/java/com/example/freetours/model/Reservation.java
 package com.example.freetours.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import java.util.Date;
 
 @Entity
 public class Reservation {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "tour_id")
-    private Tour tour;
-
+    @NotNull
     private String status;
+
+    @NotNull
+    @Temporal(TemporalType.DATE)
+    private Date date;
+
+    @ManyToOne
+    @JoinColumn(name = "tour_id", nullable = false)
+    private Tour tour;
 
     // Getters y Setters
     public Long getId() {
@@ -28,12 +31,20 @@ public class Reservation {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public String getStatus() {
+        return status;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public Tour getTour() {
@@ -42,13 +53,5 @@ public class Reservation {
 
     public void setTour(Tour tour) {
         this.tour = tour;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 }
