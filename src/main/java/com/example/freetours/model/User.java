@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -27,16 +29,21 @@ public class User {
     @Email(message = "Email should be valid")
     private String email;
 
-    @NotBlank(message = "Role is mandatory")
-    private String role;
-
     @OneToMany(mappedBy = "user")
     @JsonManagedReference(value = "user-reservations")
-    private Set<Reservation> reservations;
+    private Set<Reservation> reservations = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
     @JsonManagedReference(value = "user-comments")
-    private Set<Comment> comments;
+    private Set<Comment> comments = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
     // Getters and Setters
     public Long getId() {
@@ -71,14 +78,6 @@ public class User {
         this.email = email;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
     public Set<Reservation> getReservations() {
         return reservations;
     }
@@ -93,5 +92,13 @@ public class User {
 
     public void setComments(Set<Comment> comments) {
         this.comments = comments;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }

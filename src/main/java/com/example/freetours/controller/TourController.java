@@ -4,6 +4,7 @@ import com.example.freetours.model.Tour;
 import com.example.freetours.service.TourService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -29,11 +30,13 @@ public class TourController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Tour> createTour(@Valid @RequestBody Tour tour) {
         return ResponseEntity.ok(tourService.saveTour(tour));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Tour> updateTour(@PathVariable Long id, @Valid @RequestBody Tour tourDetails) {
         Optional<Tour> tour = tourService.getTourById(id);
         if (tour.isPresent()) {
@@ -49,6 +52,7 @@ public class TourController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteTour(@PathVariable Long id) {
         Optional<Tour> tour = tourService.getTourById(id);
         if (tour.isPresent()) {
