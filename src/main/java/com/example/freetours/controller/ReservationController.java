@@ -2,13 +2,10 @@ package com.example.freetours.controller;
 
 import com.example.freetours.model.Reservation;
 import com.example.freetours.service.ReservationService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -23,41 +20,22 @@ public class ReservationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Reservation> getReservationById(@PathVariable Long id) {
-        Optional<Reservation> reservation = reservationService.getReservationById(id);
-        if (reservation.isPresent()) {
-            return ResponseEntity.ok(reservation.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public Reservation getReservationById(@PathVariable Long id) {
+        return reservationService.getReservationById(id);
     }
 
     @PostMapping
-    public ResponseEntity<Reservation> createReservation(@Valid @RequestBody Reservation reservation) {
-        return ResponseEntity.ok(reservationService.saveReservation(reservation));
+    public Reservation createReservation(@RequestBody Reservation reservation) {
+        return reservationService.createReservation(reservation);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Reservation> updateReservation(@PathVariable Long id, @Valid @RequestBody Reservation reservationDetails) {
-        Optional<Reservation> reservation = reservationService.getReservationById(id);
-        if (reservation.isPresent()) {
-            Reservation reservationToUpdate = reservation.get();
-            reservationToUpdate.setStatus(reservationDetails.getStatus());
-            reservationToUpdate.setDate(reservationDetails.getDate());
-            return ResponseEntity.ok(reservationService.saveReservation(reservationToUpdate));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public Reservation updateReservation(@PathVariable Long id, @RequestBody Reservation reservation) {
+        return reservationService.updateReservation(id, reservation);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReservation(@PathVariable Long id) {
-        Optional<Reservation> reservation = reservationService.getReservationById(id);
-        if (reservation.isPresent()) {
-            reservationService.deleteReservation(id);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public void deleteReservation(@PathVariable Long id) {
+        reservationService.deleteReservation(id);
     }
 }

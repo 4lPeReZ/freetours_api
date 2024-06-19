@@ -1,12 +1,13 @@
-// src/main/java/com/example/freetours/controller/UserController.java
 package com.example.freetours.controller;
 
 import com.example.freetours.model.User;
 import com.example.freetours.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @GetMapping
     public List<User> getAllUsers() {
         return userService.getAllUsers();
@@ -25,25 +29,23 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         Optional<User> user = userService.getUserById(id);
-        if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.saveUser(user);
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return ResponseEntity.ok(userService.saveUser(user));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User userDetails) {
         Optional<User> user = userService.getUserById(id);
         if (user.isPresent()) {
             User userToUpdate = user.get();
             userToUpdate.setUsername(userDetails.getUsername());
-            userToUpdate.setPassword(userDetails.getPassword());
+            userToUpdate.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+            userToUpdate.setEmail(userDetails.getEmail());
             userToUpdate.setRole(userDetails.getRole());
             return ResponseEntity.ok(userService.saveUser(userToUpdate));
         } else {

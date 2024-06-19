@@ -1,33 +1,31 @@
 package com.example.freetours.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 @Entity
+@Table(name = "comments")
 public class Comment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Content is mandatory")
-    @Size(min = 10, max = 500, message = "Content must be between 10 and 500 characters")
-    private String content;
+    @NotBlank(message = "Text is mandatory")
+    private String text;
 
-    @NotNull(message = "User is mandatory")
     @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference(value = "user-comments")
     private User user;
 
-    @NotNull(message = "Tour is mandatory")
     @ManyToOne
+    @JoinColumn(name = "tour_id", nullable = false)
+    @JsonBackReference(value = "tour-comments")
     private Tour tour;
 
-    // Getters y Setters
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -36,12 +34,12 @@ public class Comment {
         this.id = id;
     }
 
-    public String getContent() {
-        return content;
+    public String getText() {
+        return text;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setText(String text) {
+        this.text = text;
     }
 
     public User getUser() {

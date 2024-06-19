@@ -1,35 +1,44 @@
 package com.example.freetours.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import java.util.Set;
 
 @Entity
+@Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "Username is mandatory")
-    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+    @Size(min = 3, max = 50)
     private String username;
 
     @NotBlank(message = "Password is mandatory")
-    @Size(min = 6, message = "Password must be at least 6 characters")
+    @Size(min = 8, max = 100)
     private String password;
-
-    @NotBlank(message = "Role is mandatory")
-    private String role;
 
     @NotBlank(message = "Email is mandatory")
     @Email(message = "Email should be valid")
     private String email;
 
-    // Getters y Setters
+    @NotBlank(message = "Role is mandatory")
+    private String role;
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference(value = "user-reservations")
+    private Set<Reservation> reservations;
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference(value = "user-comments")
+    private Set<Comment> comments;
+
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -54,6 +63,14 @@ public class User {
         this.password = password;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getRole() {
         return role;
     }
@@ -62,11 +79,19 @@ public class User {
         this.role = role;
     }
 
-    public String getEmail() {
-        return email;
+    public Set<Reservation> getReservations() {
+        return reservations;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setReservations(Set<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
     }
 }

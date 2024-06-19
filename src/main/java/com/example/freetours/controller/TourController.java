@@ -2,11 +2,11 @@ package com.example.freetours.controller;
 
 import com.example.freetours.model.Tour;
 import com.example.freetours.service.TourService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,9 +24,8 @@ public class TourController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Tour> getTourById(@PathVariable Long id) {
-        return tourService.getTourById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<Tour> tour = tourService.getTourById(id);
+        return tour.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping

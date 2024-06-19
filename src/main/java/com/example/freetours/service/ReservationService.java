@@ -10,6 +10,7 @@ import java.util.Optional;
 
 @Service
 public class ReservationService {
+
     @Autowired
     private ReservationRepository reservationRepository;
 
@@ -17,12 +18,23 @@ public class ReservationService {
         return reservationRepository.findAll();
     }
 
-    public Optional<Reservation> getReservationById(Long id) {
-        return reservationRepository.findById(id);
+    public Reservation getReservationById(Long id) {
+        Optional<Reservation> reservation = reservationRepository.findById(id);
+        return reservation.orElse(null);
     }
 
-    public Reservation saveReservation(Reservation reservation) {
+    public Reservation createReservation(Reservation reservation) {
         return reservationRepository.save(reservation);
+    }
+
+    public Reservation updateReservation(Long id, Reservation reservation) {
+        Optional<Reservation> existingReservation = reservationRepository.findById(id);
+        if (existingReservation.isPresent()) {
+            reservation.setId(id);
+            return reservationRepository.save(reservation);
+        } else {
+            return null;
+        }
     }
 
     public void deleteReservation(Long id) {

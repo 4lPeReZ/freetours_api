@@ -2,11 +2,11 @@ package com.example.freetours.controller;
 
 import com.example.freetours.model.Comment;
 import com.example.freetours.service.CommentService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,11 +25,7 @@ public class CommentController {
     @GetMapping("/{id}")
     public ResponseEntity<Comment> getCommentById(@PathVariable Long id) {
         Optional<Comment> comment = commentService.getCommentById(id);
-        if (comment.isPresent()) {
-            return ResponseEntity.ok(comment.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return comment.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -42,7 +38,7 @@ public class CommentController {
         Optional<Comment> comment = commentService.getCommentById(id);
         if (comment.isPresent()) {
             Comment commentToUpdate = comment.get();
-            commentToUpdate.setContent(commentDetails.getContent());
+            commentToUpdate.setText(commentDetails.getText());
             return ResponseEntity.ok(commentService.saveComment(commentToUpdate));
         } else {
             return ResponseEntity.notFound().build();

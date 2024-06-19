@@ -1,4 +1,3 @@
-// src/main/java/com/example/freetours/repository/ReservationRepository.java
 package com.example.freetours.repository;
 
 import com.example.freetours.model.Reservation;
