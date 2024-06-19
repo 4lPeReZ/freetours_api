@@ -31,8 +31,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/api/auth/**").permitAll()
+                                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                                 .requestMatchers("/api/tours/**").permitAll()
-                                .requestMatchers("/api/reservations/**").authenticated() // Cambia según sea necesario
+                                .requestMatchers("/api/reservations/**").authenticated()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement ->
