@@ -1,4 +1,3 @@
-// src/main/java/com/example/freetours/service/CommentService.java
 package com.example.freetours.service;
 
 import com.example.freetours.model.Comment;
@@ -11,6 +10,7 @@ import java.util.Optional;
 
 @Service
 public class CommentService {
+
     @Autowired
     private CommentRepository commentRepository;
 
