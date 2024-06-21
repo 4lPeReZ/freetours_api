@@ -28,4 +28,8 @@ public class TourService {
     public void deleteTour(Long id) {
         tourRepository.deleteById(id);
     }
+
+    public Tour createTour(Tour tour) {
+        return tourRepository.save(tour);
+    }
 }

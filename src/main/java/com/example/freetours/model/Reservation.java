@@ -3,6 +3,9 @@ package com.example.freetours.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -18,6 +21,9 @@ public class Reservation {
 
     @Temporal(TemporalType.DATE)
     private Date date;
+
+    @NotNull(message = "Number of people is mandatory")
+    private Integer numPeople;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -54,6 +60,14 @@ public class Reservation {
         this.date = date;
     }
 
+    public Integer getNumPeople() {
+        return numPeople;
+    }
+
+    public void setNumPeople(Integer numPeople) {
+        this.numPeople = numPeople;
+    }
+
     public User getUser() {
         return user;
     }
@@ -68,5 +82,11 @@ public class Reservation {
 
     public void setTour(Tour tour) {
         this.tour = tour;
+    }
+
+    public void setReservationDate(LocalDateTime now) {
+    }
+
+    public void setDate(String s) {
     }
 }
