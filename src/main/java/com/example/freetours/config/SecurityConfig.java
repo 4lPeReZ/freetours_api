@@ -34,8 +34,10 @@ public class SecurityConfig {
                         authorizeRequests
                                 .requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                                .requestMatchers("/api/tours/**").authenticated()
+                                .requestMatchers("/api/tours/**").permitAll()
                                 .requestMatchers("/api/reservations/**").authenticated()
+                                .requestMatchers("/api/comments/**").authenticated()
+                                .requestMatchers("/api/reviews/**").authenticated()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement ->
