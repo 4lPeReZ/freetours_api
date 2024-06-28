@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -62,7 +64,6 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-
     @PostMapping("/login")
     public Map<String, String> loginUser(@RequestBody User user) throws Exception {
         try {
@@ -75,5 +76,28 @@ public class AuthController {
         String token = jwtUtil.generateToken(userDetails);
 
         return Map.of("token", token);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<User> getUserProfile(Authentication authentication) {
+        String username = authentication.getName();
+        User user = userService.getUserByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        return ResponseEntity.ok(user);
+    }
+
+    @PutMapping("/profile-edit")
+    public ResponseEntity<User> updateUserProfile(@RequestBody User userDetails, Authentication authentication) {
+        String username = authentication.getName();
+        User user = userService.getUserByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setUsername(userDetails.getUsername());
+        user.setEmail(userDetails.getEmail());
+        // Only update the password if a new one is provided
+        if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+        }
+
+        User updatedUser = userService.saveUser(user);
+        return ResponseEntity.ok(updatedUser);
     }
 }
