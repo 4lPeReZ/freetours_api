@@ -5,6 +5,7 @@ import com.example.freetours.model.User;
 import com.example.freetours.service.UserService;
 import com.example.freetours.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +38,7 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public String registerUser(@RequestBody User user) {
+    public ResponseEntity<Map<String, String>> registerUser(@RequestBody User user) {
         // Initialize roles set if null
         if (user.getRoles() == null) {
             user.setRoles(new HashSet<>());
@@ -53,8 +55,13 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         userService.saveUser(user);
-        return "User registered successfully";
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "User registered successfully");
+
+        return ResponseEntity.ok(response);
     }
+
 
     @PostMapping("/login")
     public Map<String, String> loginUser(@RequestBody User user) throws Exception {
