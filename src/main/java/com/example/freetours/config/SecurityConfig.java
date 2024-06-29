@@ -4,6 +4,7 @@ import com.example.freetours.filter.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -34,6 +35,8 @@ public class SecurityConfig {
                         authorizeRequests
                                 .requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                                .requestMatchers("/api/auth/assign-role").hasRole("ADMIN") // Proteger el nuevo endpoint
+                                .requestMatchers(HttpMethod.PUT, "/api/auth/profile/edit").authenticated() // Permitir PUT en /api/auth/profile/edit
                                 .requestMatchers("/api/tours/**").permitAll()
                                 .requestMatchers("/api/reservations/**").authenticated()
                                 .requestMatchers("/api/comments/**").authenticated()

@@ -6,10 +6,11 @@ import com.example.freetours.service.UserService;
 import com.example.freetours.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -75,7 +77,16 @@ public class AuthController {
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
         String token = jwtUtil.generateToken(userDetails);
 
-        return Map.of("token", token);
+        // Incluye los roles en la respuesta
+        String roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+        response.put("roles", roles);
+
+        return response;
     }
 
     @GetMapping("/profile")
@@ -85,8 +96,9 @@ public class AuthController {
         return ResponseEntity.ok(user);
     }
 
-    @PutMapping("/profile-edit")
-    public ResponseEntity<User> updateUserProfile(@RequestBody User userDetails, Authentication authentication) {
+    @PutMapping("/profile/edit")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Map<String, Object>> updateUserProfile(@RequestBody User userDetails, Authentication authentication) {
         String username = authentication.getName();
         User user = userService.getUserByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -98,6 +110,17 @@ public class AuthController {
         }
 
         User updatedUser = userService.saveUser(user);
-        return ResponseEntity.ok(updatedUser);
+
+        // Generate a new JWT token
+        UserDetails userDetailsUpdated = userDetailsService.loadUserByUsername(user.getUsername());
+        String newToken = jwtUtil.generateToken(userDetailsUpdated);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", newToken);
+        response.put("user", updatedUser);
+        response.put("message", "Profile updated successfully");
+
+        return ResponseEntity.ok(response);
     }
+
 }
